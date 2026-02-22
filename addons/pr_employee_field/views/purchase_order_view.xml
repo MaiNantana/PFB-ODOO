@@ -1,0 +1,26 @@
+<odoo>
+  <record id="purchase_order_form_add_employee_department" model="ir.ui.view">
+    <field name="name">purchase.order.form.add.employee.department</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+    <field name="arch" type="xml">
+      <!-- Insert after vendor reference -->
+      <xpath expr="//field[@name='partner_ref']" position="after">
+        <field name="employee_id" readonly="state in ['done', 'cancel']" options="{'no_open': False}"/>
+        <field name="department_id" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="purchase_order_list_add_employee_department" model="ir.ui.view">
+    <field name="name">purchase.order.list.add.employee.department</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//list//field[@name='date_order']" position="after">
+        <field name="employee_id"/>
+        <field name="department_id"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,30 @@
+<odoo>
+  <record id="purchase_report_search_add_employee_department" model="ir.ui.view">
+    <field name="name">purchase.report.search.add.employee.department</field>
+    <field name="model">purchase.report</field>
+    <field name="inherit_id" ref="purchase.view_purchase_order_search"/>
+    <field name="priority" eval="99"/>
+    <field name="arch" type="xml">
+      <xpath expr="//search/group[@expand='0']" position="inside">
+        <field name="employee_id"/>
+        <field name="department_id"/>
+      </xpath>
+      <xpath expr="//search/group[@expand='1']/filter[@name='company']" position="after">
+        <filter string="Employee" name="group_employee_id" context="{'group_by':'employee_id'}"/>
+        <filter string="Department" name="group_department_id" context="{'group_by':'department_id'}"/>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="purchase_report_tree_add_employee_department" model="ir.ui.view">
+    <field name="name">purchase.report.list.add.employee.department</field>
+    <field name="model">purchase.report</field>
+    <field name="inherit_id" ref="purchase.purchase_report_view_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//list/field[@name='user_id']" position="after">
+        <field name="employee_id" optional="show"/>
+        <field name="department_id" optional="show"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

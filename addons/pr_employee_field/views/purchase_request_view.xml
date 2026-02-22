@@ -1,0 +1,31 @@
+<odoo>
+  <record id="purchase_request_form_add_employee" model="ir.ui.view">
+    <field name="name">purchase.request.form.add.employee</field>
+    <field name="model">purchase.request</field>
+
+    <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
+
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='assigned_to']" position="after">
+        <field name="employee_id" 
+        readonly="state in ['to_approve', 'approved', 'in_progress', 'done', 'rejected']"
+        options="{'no_create': True, 'no_open': False}"/>
+        <field name="department_id" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+
+
+  <record id="purchase_request_tree_add_employee_department" model="ir.ui.view">
+    <field name="name">purchase.request.tree.add.employee.department</field>
+    <field name="model">purchase.request</field>
+    <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//list//field[@name='company_id']" position="after">
+        <field name="employee_id"/>
+        <field name="department_id"/>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>
