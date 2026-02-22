@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: odoo-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    restart: always
+
+  odoo:
+    image: odoo:18
+    container_name: odoo-app
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    volumes:
+      # ✅ mount source code (แก้ได้บน Windows + VS Code)
+      - ./odoo-src:/opt/odoo
+      # ✅ custom addons ของคุณ
+      - ./addons:/mnt/extra-addons
+      # ✅ config
+      - ./odoo.conf:/etc/odoo/odoo.conf
+      # ✅ data volume (filestore, sessions)
+      - odoo-web-data:/var/lib/odoo
+    # ✅ สั่งรัน odoo-bin จาก source แทน
+    command: >
+      bash -lc "/opt/odoo/odoo-bin -c /etc/odoo/odoo.conf"
+      bash -lc "python3 /opt/odoo/odoo-bin -c /etc/odoo/odoo.conf"
+
+    restart: always
+
+volumes:
+  odoo-db-data:
+  odoo-web-data:
