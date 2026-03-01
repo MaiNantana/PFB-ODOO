@@ -1,3 +1,5 @@
+import calendar
+
 from odoo import _, api, fields, models
 
 class PurchaseRequest(models.Model):
@@ -12,10 +14,61 @@ class PurchaseRequest(models.Model):
         return fields.Date.context_today(self)
 
     @api.model
-    def _get_default_name(self):
-        sequence_date = self._get_pr_sequence_date()
-        return self.env["ir.sequence"].next_by_code(
-            "purchase.request",
+    def _get_pr_sequence(self):
+        company_id = self.env.company.id
+        return self.env["ir.sequence"].search(
+            [
+                ("code", "=", "purchase.request"),
+                ("company_id", "in", [company_id, False]),
+            ],
+            order="company_id",
+            limit=1,
+        )
+
+    @api.model
+    def _ensure_pr_sequence_date_range(self, sequence_date):
+        sequence = self._get_pr_sequence()
+        if not sequence or not sequence.use_date_range:
+            return False
+
+        last_day = calendar.monthrange(sequence_date.year, sequence_date.month)[1]
+        month_start = sequence_date.replace(day=1)
+        month_end = sequence_date.replace(day=last_day)
+
+        date_range = self.env["ir.sequence.date_range"].search(
+            [
+                ("sequence_id", "=", sequence.id),
+                ("date_from", "=", month_start),
+                ("date_to", "=", month_end),
+            ],
+            limit=1,
+        )
+        if date_range:
+            return date_range
+
+        return self.env["ir.sequence.date_range"].sudo().create(
+            {
+                "sequence_id": sequence.id,
+                "date_from": month_start,
+                "date_to": month_end,
+            }
+        )
+
+    @api.model
+    def _next_pr_sequence_name(self, vals=None):
+        sequence_date = self._get_pr_sequence_date(vals)
+        sequence = self._get_pr_sequence()
+        if not sequence:
+            return self.env["ir.sequence"].next_by_code("purchase.request")
+
+        date_range = self._ensure_pr_sequence_date_range(sequence_date)
+        if sequence.use_date_range and date_range:
+            return date_range.with_context(
+                ir_sequence_date=sequence_date,
+                ir_sequence_date_range=date_range.date_from,
+            )._next()
+
+        return sequence.with_context(ir_sequence_date=sequence_date).next_by_id(
             sequence_date=sequence_date,
         )
 
@@ -70,10 +123,7 @@ class PurchaseRequest(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get("name", _("New")) == _("New"):
-                vals["name"] = self.env["ir.sequence"].next_by_code(
-                    "purchase.request",
-                    sequence_date=self._get_pr_sequence_date(vals),
-                )
+                vals["name"] = self._next_pr_sequence_name(vals)
         return super().create(vals_list)
     
     def _prepare_purchase_order(self, picking_type_id=False, company_id=False, origin=False):
