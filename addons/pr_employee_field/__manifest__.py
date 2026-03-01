@@ -8,7 +8,6 @@
         "hr",  # use hr.employee
     ],
     "data": [
-        "data/purchase_request_sequence.xml",
         "views/purchase_request_view.xml",
         "views/purchase_order_view.xml",
         "views/purchase_report_view.xml",
