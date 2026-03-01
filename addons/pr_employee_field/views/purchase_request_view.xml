@@ -6,11 +6,62 @@
     <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
 
     <field name="arch" type="xml">
+      <xpath expr="//div[@name='button_box']" position="inside">
+        <button
+          type="object"
+          name="action_view_purchase_order"
+          class="oe_stat_button"
+          invisible="purchase_order_count == 0"
+          icon="fa-shopping-cart"
+          string="Purchase Orders">
+          <field
+            name="purchase_order_count"
+            widget="statinfo"
+            string="Purchase Orders"/>
+        </button>
+      </xpath>
+
       <xpath expr="//field[@name='assigned_to']" position="after">
         <field name="employee_id" 
         readonly="state in ['to_approve', 'approved', 'in_progress', 'done', 'rejected']"
         options="{'no_create': True, 'no_open': False}"/>
         <field name="department_id" readonly="1"/>
+      </xpath>
+
+      <xpath expr="//notebook" position="inside">
+        <page string="Purchase Orders" invisible="purchase_order_count == 0">
+          <field name="purchase_order_ids" readonly="1">
+            <list create="0" delete="0" edit="0" open_form_view="1">
+              <field name="priority" optional="show" widget="priority" nolabel="1"/>
+              <field name="partner_ref" optional="hide"/>
+              <field name="name"/>
+              <field name="date_approve" optional="show"/>
+              <field name="partner_id"/>
+              <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+              <field name="date_order" optional="show"/>
+              <field name="origin" optional="show"/>
+              <field name="employee_id" optional="show"/>
+              <field name="department_id" optional="show"/>
+              <field name="amount_untaxed" widget="monetary" optional="hide"/>
+              <field name="amount_total" optional="show"/>
+              <field name="currency_id" column_invisible="True"/>
+              <field
+                name="state"
+                widget="badge"
+                decoration-success="state == 'done'"
+                decoration-info="state == 'purchase'"
+              />
+              <field
+                name="invoice_status"
+                widget="badge"
+                decoration-success="invoice_status == 'invoiced'"
+                decoration-info="invoice_status == 'to invoice'"
+                optional="show"
+              />
+              <field name="date_planned" optional="show"/>
+            </list>
+          </field>
+        </page>
       </xpath>
     </field>
   </record>
