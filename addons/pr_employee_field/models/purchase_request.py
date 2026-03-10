@@ -107,12 +107,11 @@ class PurchaseRequest(models.Model):
 
     def action_view_purchase_order(self):
         self.ensure_one()
-        action = self.env["ir.actions.actions"]._for_xml_id(
-            "purchase.purchase_form_action"
-        )
-        purchase_orders = self.purchase_order_ids
-        action["domain"] = [("id", "in", purchase_orders.ids)]
-        if len(purchase_orders) == 1:
+        action = self.env["ir.actions.actions"]._for_xml_id("purchase.purchase_rfq")
+        purchase_orders = self.mapped("line_ids.purchase_lines.order_id")
+        if len(purchase_orders) > 1:
+            action["domain"] = [("id", "in", purchase_orders.ids)]
+        elif purchase_orders:
             action["views"] = [
                 (self.env.ref("purchase.purchase_order_form").id, "form")
             ]
