@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#875A7B"/>
+      <stop offset="100%" stop-color="#68465f"/>
+    </linearGradient>
+    <style>
+      @font-face {
+        font-family: "OdooUIIcons";
+        src: url("/web/static/lib/odoo_ui_icons/fonts/odoo_ui_icons.woff2") format("woff2");
+      }
+      .glyph {
+        font-family: "OdooUIIcons";
+        font-size: 58px;
+        fill: #ffffff;
+      }
+      .label {
+        font: 700 16px Arial, sans-serif;
+        fill: #f7f3f6;
+        letter-spacing: 0.5px;
+      }
+    </style>
+  </defs>
+  <rect x="6" y="6" width="116" height="116" rx="24" fill="url(#bg)"/>
+  <circle cx="64" cy="48" r="23" fill="rgba(255,255,255,0.12)"/>
+  <text x="64" y="66" text-anchor="middle" class="glyph">&#xe80c;</text>
+  <text x="64" y="103" text-anchor="middle" class="label">REPORT</text>
+</svg>
